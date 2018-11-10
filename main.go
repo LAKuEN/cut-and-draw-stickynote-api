@@ -77,6 +77,14 @@ func postHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError,
 			"Failed to convert zip file to bytearray\n")
 	}
+	defer func() {
+		if err := os.Remove(zipFilePath); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+		}
+		if err = os.RemoveAll(dstDirPath); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+		}
+	}()
 
 	return c.Blob(http.StatusOK, "application/zip", zipFileBytes)
 }
