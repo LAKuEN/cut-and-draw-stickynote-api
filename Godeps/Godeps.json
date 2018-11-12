@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/LAKuEN/cut-and-draw-stickynote-api",
-	"GoVersion": "go1.10",
+	"GoVersion": "go1.11",
 	"GodepVersion": "v80",
 	"Deps": [
 		{
