@@ -26,18 +26,20 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/", getHandler)
+	// e.GET("/", getHandler)
+	e.Static("/", "web") // Webページを開く
 	e.POST("/", postHandler)
+	e.POST("/upload", uploadHandler)
 
 	port := ":" + os.Getenv("PORT")
 	e.Start(port)
 }
 
-func getHandler(c echo.Context) error {
-	message := `# How to call the API
-$ curl -X POST {URL} -F "file=@{image file path}"`
-	return c.String(http.StatusOK, message+"\n")
-}
+// func getHandler(c echo.Context) error {
+// 	message := `# How to call the API
+// $ curl -X POST {URL} -F "file=@{image file path}"`
+// 	return c.String(http.StatusOK, message+"\n")
+// }
 
 func postHandler(c echo.Context) error {
 	imgFile, err := context2mat(c)
@@ -89,10 +91,19 @@ func postHandler(c echo.Context) error {
 	return c.Blob(http.StatusOK, "application/zip", zipFileBytes)
 }
 
+func uploadHandler(c echo.Context) error {
+	// TODO 実装: 画像ファイルを取り出して、それ以降の処理はcurlで投げつけた場合の処理と共通化する
+	return postHandler(c)
+}
+
 // context2mat はecho.Contextから画像ファイル名と画像データを
 // ImgFile構造体として取り出します。
 func context2mat(c echo.Context) (ImgFile, error) {
+	fmt.Println(c)
+	fmt.Println("**********")
 	fileHeader, err := c.FormFile("file")
+	fmt.Println(fileHeader)
+	fmt.Println("**********")
 	if err != nil {
 		return ImgFile{}, err
 	}
